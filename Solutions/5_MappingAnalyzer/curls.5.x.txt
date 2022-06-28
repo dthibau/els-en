@@ -1,0 +1,163 @@
+curl -XGET 'localhost:9200/docs/_analyze?analyzer=standard&pretty' -d '
+On peut spécifier le mapping à la création d''un index
+'
+
+curl -XGET 'localhost:9200/docs/_analyze?analyzer=french&pretty' -d '
+On peut spécifier le mapping à la création d''un index
+'
+
+
+
+curl -XGET 'localhost:9200/docs/_mapping?pretty' 
+
+
+curl -XDELETE 'localhost:9200/docs_fr?pretty'
+curl -XPUT -H "Content-Type: application/json" 'http://localhost:9200/docs_fr'  -d '
+{
+  "settings" : {
+    "number_of_shards" : 3,  
+    "number_of_replicas" : 1  
+  } 
+}' 
+
+curl -XPUT 'localhost:9200/buro/_mapping/fixed?pretty' -d '
+{
+  "dynamic": "false",
+  "_source": {
+    "excludes": [
+      "data"
+    ]
+  },
+  "properties": {
+    "attachment": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "french",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            }
+          }
+        },
+        "content_length": {
+          "type": "long"
+        },
+        "content_type": {
+          "type": "keyword"  
+        },
+        "date": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "name": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}'
+
+---------------- Parent / enfant -------
+
+DELETE /parent
+PUT /parent
+{
+  "settings" : {
+    "number_of_shards" : 3,  
+    "number_of_replicas" : 1  
+  } 
+}
+
+
+PUT /parent/_mapping/docs
+{
+"dynamic": "false",
+  "_source": {
+    "excludes": [
+      "data"
+    ]
+  },"_parent": {
+        "type": "categorie" 
+      },  
+    "properties": {
+    "attachment": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "french",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            }
+          }
+        },
+        "content_length": {
+          "type": "long"
+        },
+        "content_type": {
+          "type": "keyword"  
+        },
+        "date": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "name": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}
+PUT /parent/_mappings/categorie
+{
+  "properties": {
+    "libelle": {
+      "type": "keyword"
+    }
+  }
+}
+
+PUT /parent/categorie/1
+{
+"libelle":"dev"
+}
+
+PUT /parent/categorie/2
+{
+"libelle":"admin"
+}
+
+PUT /parent/categorie/3
+{
+"libelle":"metier"
+}
+
+
+
+
+

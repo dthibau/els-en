@@ -1,0 +1,198 @@
+####################  ILM #################################
+PUT _ilm/policy/access_policy
+{
+  "policy": {
+    "phases": {
+      "hot": {                      
+        "actions": {
+          "rollover": {
+            "max_size": "1GB",     
+            "max_age": "30d"
+          }
+        }
+      },
+      "delete": {
+        "min_age": "2d",           
+        "actions": {
+          "delete": {}              
+        }
+      }
+    }
+  }
+}
+
+DELETE _template/access_template
+
+PUT _template/access_template
+{
+  "index_patterns": ["access-*"],                
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1,
+    "index.lifecycle.name": "access_policy",     
+    "index.lifecycle.rollover_alias": "access"   
+  }, "mappings" : {
+    "properties": {
+    "@timestamp": {
+      "type": "date"
+    },
+    "agent": {
+      "type": "text"
+    },
+    "auth": {
+      "type": "keyword"
+    },
+    "bytes": {
+      "type": "long"
+    },
+    "clientip": {
+      "type": "ip"
+    },
+    "geoip": {
+      "properties": {
+        "city_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "continent_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "country_iso_code": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "region_name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "httpversion": {
+      "type": "keyword"
+    },
+    "ident": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "message": {
+      "type": "text"
+    },
+    "referrer": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "request": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "response": {
+      "type": "long"
+    },
+    "timestamp": {
+      "type": "text",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "verb": {
+      "type": "keyword"
+    }
+  }
+  }
+}
+
+PUT access-000001
+{
+  "aliases": {
+    "access": {
+      "is_write_index": true
+    }
+  }
+}
+
+
+
+#################### Backup / Restore #######################
+
+# elasticsearch yml
+path.repo: /home/dthibau/Formations/ElasticSearch/MyWork/Repo
+
+\\SALLE1PC6\partage_elk
+
+GET /_cat/indices
+
+POST /*/_open
+{
+
+}
+
+
+
+PUT _snapshot/my_backup
+{
+"type": "fs",
+"settings": {
+  "location": "/home/dthibau/Formations/ElasticSearch/MyWork/Repo"
+} }
+
+PUT _snapshot/my_backup/snapshot_1
+
+POST /*/_close
+{
+
+}
+
+POST _snapshot/my_backup/snapshot_1/_restore
+
+
+
+################## Slow log ##########################
+PUT /site/_settings
+{ "index.search.slowlog.threshold.query.warn" : "10ms",
+"index.search.slowlog.threshold.fetch.debug": "10ms",
+"index.indexing.slowlog.threshold.index.info": "5s" }
+
+PUT /_cluster/settings
+{ "transient" : {
+  "logger.index.search.slowlog" : "DEBUG",
+  "logger.index.indexing.slowlog" : "WARN"
+} }
+
+
+

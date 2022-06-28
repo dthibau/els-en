@@ -1,0 +1,146 @@
+
+
+curl -XGET 'localhost:9200/docs_fr/_analyze?analyzer=standard&pretty' -d '
+Administration d''Oracle Forms/Report 11g/12c
+'
+
+curl -XGET 'localhost:9200/docs_fr/_search?size=2&_source=name,attachment.title&pretty&explain' -d '
+{
+  "query" : {"multi_match" : { 
+  "query" : "administration", "fields" : ["attachment.title^5", "attachment.content"] } }
+}
+'
+
+curl -XGET 'localhost:9200/docs_fr/_search?_source=name,attachment.title&pretty&explain' -d '
+{
+  "query" : {
+    "bool" : {
+      "should" : { "match" : { "attachment.content" : "Administration"} },
+      "should" : { "match" : { "attachment.title" : { "query" : "Administration", "boost" :5 } } }
+    }
+  }
+}
+'
+
+curl -XGET 'localhost:9200/docs_fr/_search?_source=name,attachment.title&pretty' -d '
+{
+   "query": {
+        "match_phrase" : {
+            "attachment.content" : "Administration Java"
+        }
+    }
+}
+'
+
+curl -XGET 'localhost:9200/docs_fr/_search?_source=name,attachment.title&pretty' -d '
+{
+   "query": {
+        "match_phrase" : {
+            "attachment.content": { 
+		"query": "framework java",
+		"slop": 20  
+		}
+        }
+    }
+}
+'
+
+
+curl -XGET 'localhost:9200/docs_fr/_search?_source=name,attachment.title&pretty' -d '
+{
+   "query": {
+        "match_phrase_prefix" : {
+            "attachment.title" : "Administration J"
+        }
+    }
+}
+'
+
+# Préparation de l'index pour l'autocomplete
+curl -XDELETE 'http://localhost:9200/autocomplete'
+
+curl -XPUT 'localhost:9200/autocomplete?pretty' -d '
+{
+"settings": {
+  "analysis": {
+   "filter": {
+        "autocompleter": {
+          "type": "edge_ngram",
+          "min_gram": 3,
+          "max_gram": 20
+        }},
+        "analyzer": {
+          "auto_analyzer": {
+            "type": "custom",
+            "tokenizer" : "standard",
+             "filter": [ "lowercase", "autocompleter" ] 
+          }
+        }
+    }
+  }
+}'
+
+curl -XGET 'localhost:9200/autocomplete/_analyze?analyzer=auto_analyzer' -d '
+Administration Jboss'
+
+curl -XPUT 'localhost:9200/autocomplete/_mapping/file?pretty' -d '
+{
+
+      "properties" : {
+        "attachment" : {
+            "properties" : {
+              "content" : {
+                "type" : "text",
+                "analyzer" : "french"
+                },
+                "content_length" : {
+                  "type" : "long"
+                },
+                "content_type" : {
+                  "type" : "keyword"
+                }, 
+                "date" : {
+                  "type" : "date"
+                },
+                "language" : {
+                  "type" : "keyword"
+                },
+                "title" : {
+                  "type" : "text",
+                  "analyzer" : "auto_analyzer",
+                  "fields" : {
+                    "keyword" : {
+                      "type" : "keyword",
+                      "ignore_above" : 256
+                    }, "std" : {
+                      "type" : "text"
+                    }
+                  }
+                }
+            }
+        },
+        "data" : {
+          "type" : "binary"
+        },
+        "name" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+      }
+}'
+
+
+
+
+curl -XGET 'localhost:9200/autocomplete/_search?_source=name,attachment.title&pretty&explain' -d '
+{
+  "query" : {
+    "match" : { "attachment.title" : "adm" } }
+  }
+}
+'

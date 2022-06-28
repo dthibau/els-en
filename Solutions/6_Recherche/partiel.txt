@@ -1,0 +1,110 @@
+GET /docs4/_analyze
+{
+  "analyzer": "autocomplete_analyzer",
+  "text": "Administration Jboss"
+}
+
+DELETE /docs4 
+PUT /docs4/
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "autocomplete": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 10
+        }
+      },
+      "analyzer": {
+        "my_analyzer": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "autocomplete_analyzer": {
+          "type": "custom",
+          "tokenizer" : "standard",
+          "filter": [
+            "autocomplete"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "attachment": {
+          "properties": {
+            "author": {
+              "type": "text",
+              "analyzer": "my_analyzer",
+              "fields": {
+                "keyword": {
+                  "type": "text"
+                }
+              }
+            },
+            "content": {
+              "type": "text",
+              "analyzer": "french",
+              "fields": {
+                "en": {
+                  "type": "text",
+                  "analyzer": "english"
+                }
+              }
+            },
+            "content_length": {
+              "type": "long"
+            },
+            "content_type": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "date": {
+              "type": "date"
+            },
+            "keywords": {
+              "type": "keyword"
+            },
+            "language": {
+              "type": "keyword"
+            },
+            "title": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "edge": {
+                  "type": "text",
+                  "analyzer": "autocomplete_analyzer"
+                }
+              }
+            }
+          }
+        },
+        "name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

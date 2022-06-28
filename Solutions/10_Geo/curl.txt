@@ -1,0 +1,82 @@
+
+#Filtre sur un rectangle géo
+GET /site/frequentation/_search?_source=geoip
+{
+    "query": {
+        "bool" : {
+            "must" : {
+                "match_all" : {}
+            },
+            "filter" : {
+                "geo_bounding_box" : {
+                    "geoip.location" : {
+                        "top_left" : {
+                            "lat" : 90.0,
+                            "lon" : 0.0
+                        },
+                        "bottom_right" : {
+                            "lat" : 0.0,
+                            "lon" : 90.0
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+# Avec agrégation
+GET /site/frequentation/_search?_source=false
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match_all": {}
+      },
+      "filter": {
+        "geo_bounding_box": {
+          "geoip.location": {
+            "top_left": {
+              "lat": 40.73,
+              "lon": -74.1
+            },
+            "bottom_right": {
+              "lat": 40.01,
+              "lon": -71.12
+            }
+          }
+        }
+      }
+    }
+  },
+  "aggs": {
+    "per_ring": {
+      "geo_distance": {
+        "field": "geoip.location",
+        "unit": "km",
+        "origin": {
+          "lat": 40.35,
+          "lon": -73
+        },
+        "ranges": [
+          {
+            "from": 0,
+            "to": 1000
+          },
+          {
+            "from": 1000,
+            "to": 20000
+          },
+          {
+            "from": 1000,
+            "to": 40000
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+
+

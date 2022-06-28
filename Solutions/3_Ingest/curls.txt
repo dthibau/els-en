@@ -1,0 +1,19 @@
+
+
+curl -XPUT -H "Content-Type: application/json" 'localhost:9200/_ingest/pipeline/attachment?pretty' -d '
+{
+  "description" : "Extract attachment information",
+  "processors" : [
+    {  "attachment" : { "field" : "data" } },
+    {  "remove" : { "field" : "data" } }
+  ]
+}'
+
+curl -XPUT -H "Content-Type: application/json" 'http://172.23.19.26:9200/_ingest/pipeline/attachment?pretty' -d '
+{
+  "description" : "Extract attachment information",
+  "processors" : [
+    {  "attachment" : { "field" : "data" } },
+    {  "remove" : { "field" : "data" } }
+  ]
+}'

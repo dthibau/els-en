@@ -1,0 +1,16 @@
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "multi_match": {
+      "fields": ["attachment.content"], 
+      "query": "adminnistration",
+      "fuzziness" : "AUTO"
+    }
+  },"highlight": {
+    "pre_tags": "<h5>",
+    "post_tags": "</h5>", 
+    "fields": {
+      "attachment.content": {"type":"plain","fragment_size": 20,"number_of_fragments": 1}
+    }
+  }
+}

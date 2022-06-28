@@ -1,0 +1,235 @@
+###################
+#7.1 Nested
+###################
+
+PUT my_index/my_type/1
+{
+  "group" : "fans",
+  "user" : [ 
+    {
+      "first" : "John",
+      "last" :  "Smith"
+    },
+    {
+      "first" : "Alice",
+      "last" :  "White"
+    }
+  ]
+}
+
+GET my_index/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "user.first": "Alice" }},
+        { "match": { "user.last":  "Smith" }}
+      ]
+    }
+  }
+}
+
+PUT my_index
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "user": {
+          "type": "nested" 
+        }
+      }
+    }
+  }
+}
+
+PUT my_index/my_type/1
+{
+  "group" : "fans",
+  "user" : [
+    {
+      "first" : "John",
+      "last" :  "Smith"
+    },
+    {
+      "first" : "Alice",
+      "last" :  "White"
+    }
+  ]
+}
+
+GET my_index/_search
+{
+  "query": {
+    "nested": {
+      "path": "user",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "user.first": "Alice" }},
+            { "match": { "user.last":  "Smith" }} 
+          ]
+        }
+      }
+    }
+  }
+}
+
+GET my_index/_search
+{
+  "query": {
+    "nested": {
+      "path": "user",
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "user.first": "Alice" }},
+            { "match": { "user.last":  "White" }} 
+          ]
+        }
+      },
+      "inner_hits": { 
+        "highlight": {
+          "fields": {
+            "user.first": {}
+          }
+        }
+      }
+    }
+  }
+}
+
+###################
+#7.2 Parent/enfants
+###################
+
+DELETE /parent 
+
+PUT /parent
+{
+  "settings" : {
+    "number_of_shards" : 3,  
+    "number_of_replicas" : 1  
+  } 
+}
+
+
+PUT /parent/_mapping/doc
+{
+  "dynamic": "false",
+  "_source": {
+    "excludes": [
+      "data"
+    ]
+  },
+  "properties": {
+    "attachment": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "french",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            }
+          }
+        },
+        "content_length": {
+          "type": "long"
+        },
+        "content_type": {
+          "type": "keyword"
+        },
+        "date": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "name": {
+          "type": "text"
+        }
+      }
+    },
+    "doc_cible": {
+      "type": "join",
+      "relations": {
+        "category": "cible"
+      }
+    },
+    "public": {
+      "type": "keyword"
+    }
+  }
+}
+
+
+PUT /parent/doc/1
+{
+"public":"dev",
+"doc_cible": {
+  "name": "category"
+}
+}
+
+PUT /parent/doc/2
+{
+"public":"admin",
+"doc_cible": {
+  "name": "category"
+}
+}
+
+PUT /parent/doc/3
+{
+"public":"metier",
+"doc_cible": {
+  "name": "category"
+}
+}
+
+GET /parent/_search
+{
+  "query" : {
+    "has_child": {
+      "type": "cible",
+      "query": {
+        "match" : {"attachment.content" : "administration"}
+      }
+    }
+  }
+}
+GET /parent/_search
+{
+    "query": {
+        "has_parent" : {
+            "parent_type" : "category",
+            "score" : true,
+            "query" : {
+                "term" : {
+                    "public" : "metier"
+                }
+            }
+        }
+    }
+}
+GET /parent/_search
+{
+    "query": {
+        "parent_id" : {
+            "type" : "cible",
+            "id" : "1"
+        }
+    }
+}
+
+

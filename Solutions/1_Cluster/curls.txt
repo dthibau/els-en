@@ -1,0 +1,13 @@
+curl -XDELETE 'http://localhost:9200/blogs'
+
+curl -XPUT -H "Content-Type: application/json" 'http://localhost:9200/blogs'   --data-binary "@create_index.json" 
+
+curl -XPUT -H "Content-Type: application/json" 'http://localhost:9200/blogs' -d '
+{
+  "settings" : {
+    "number_of_shards" : 3,  
+    "number_of_replicas" : 1  
+  } 
+}'
+
+curl -XPUT -H "Content-Type: application/json" 'http://localhost:9200/blogs/_settings' --data-binary "@replica.json"

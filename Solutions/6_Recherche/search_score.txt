@@ -1,0 +1,40 @@
+GET parent/docs/_search?_source=name,attachment.title&explain
+{
+  "query": {
+   "multi_match": {
+     "query": "administration",
+     "fields": ["attachment.content","attachment.title^5"]
+   }
+  }
+}
+
+GET parent/docs/_search?_source=name,attachment.title&explain
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "attachment.content": "administration"
+          }
+        },
+        {
+          "match": {
+            "attachment.title": {
+              "query": " administration",
+              "boost": 5
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+GET parent/docs/_search?_source=name,attachment.title&explain
+{ "query": { "dis_max": {
+    "queries": [
+      { "match": { "attachment.title": {"query" :"administration","boost":"5" }}},
+      { "match": { "attachment.content": "administration" }}
+    ] 
+} } }

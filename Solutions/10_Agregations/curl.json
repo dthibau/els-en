@@ -1,0 +1,121 @@
+GET fixed/_search?size=0
+{
+  "aggs": {
+    "type_doc": {
+      "terms": {
+        "field": "attachment.content_type"
+      },
+      "aggs": {
+        "langue": {
+          "terms": {
+            "field": "attachment.language"
+          }
+        }
+      }
+    },
+    "langue": {
+      "terms": {
+        "field": "attachment.language"
+      }
+    }
+  }
+}
+
+
+
+curl -XGET 'localhost:9200/docs/elastic/_search?_source=false&pretty' -d '
+{
+    "aggs" : {
+        "language" : {
+            "terms" : { "field" : "attachment.content_type.keyword" }
+        }
+    }
+}'
+
+####### Moyenne de la taille des documents
+curl -XGET 'localhost:9200/docs/elastic/_search?_source=attachment.content_type&pretty' -d '
+{
+"aggs": {
+      "moyenne": {
+        "avg": { "field": "attachment.content_length" }
+     }
+ }
+}'
+
+curl -XGET 'localhost:9200/docs/elastic/_search?_source=attachment.language&pretty' -d '
+{
+	"query" : {
+  "match_all" : {  }
+},
+    "aggs" : {
+        "language" : {
+            "terms" : { "field" : "attachment.language" }
+        }
+    }
+}'
+
+curl -XGET 'localhost:9200/docs_fr/file/_search?_source=attachment.language&pretty' -d '
+{
+	"query" : {
+  "match_all" : {  }
+},
+    "aggs" : {
+        "language" : {
+            "value_count" : { "field" : "attachment.language" }
+        }
+    }
+}'
+
+# Histogramme par mois
+curl -XGET 'localhost:9200/docs_fr/elastic/_search?_source=attachment.title&pretty' -d '
+{
+	"query" : {
+  "match_all" : {  }
+},
+    "aggs" : {
+        "date" : {
+            "date_histogram" : { 
+            	"field" : "attachment.date",
+            	"interval" : "month",
+            	"format" : "yyyy-MM-dd" }
+        } 
+    }
+}'
+
+
+####### Par pas de 5000 et type de docs
+curl -XGET 'localhost:9200/docs_fr/elastic/_search?_source=attachment.content_type&pretty' -d '
+{
+    "aggs" : {
+        "taille" : {
+            "histogram" : { "field" : "attachment.content_length",
+                             "interval" : 5000 },
+            "aggs": {
+                "type_de_contenu": {
+                    "terms": { "field": "attachment.content_type.keyword" }
+                } 
+            }
+        }
+    }
+}'
+
+GET /*/_search?size=0
+{
+  "aggs": {
+    "date": {
+      "date_histogram": {
+        "field": "attachment.date",
+        "interval": "year",
+        "format": "yyyy-MM-dd",
+        "min_doc_count": 1
+      },
+    "aggs": {
+      "moyenne": {
+        "avg": {
+          "field": "attachment.content_length"
+        }
+      }
+    }
+    }
+  }
+}

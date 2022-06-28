@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NOTICE decoding="eng" type="branch">
+            <EXPRESSION>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.SLV.xhtml</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.SLV.xhtml</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.SLV.pdfa2a</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.SLV.pdfa2a</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+               <EXPRESSION_TITLE type="data">
+                  <VALUE>Izvedbena uredba Komisije (EU) 2022/496 z dne 28. marca 2022 o odobritvi aktivne snovi z majhnim tveganjem multikapsidni virus jedrne poliedričnosti Spodoptera exigua (SeMPNV), izolat BV-0004, v skladu z Uredbo (ES) št. 1107/2009 Evropskega parlamenta in Sveta o dajanju fitofarmacevtskih sredstev v promet ter o spremembi Izvedbene uredbe Komisije (EU) št. 540/2011 (Besedilo velja za EGP)</VALUE>
+                  <LANG>sl</LANG>
+               </EXPRESSION_TITLE>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.SLV.fmx4</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.SLV.fmx4</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+               <EXPRESSION_USES_LANGUAGE type="concept">
+                  <URI>
+                     <VALUE>http://publications.europa.eu/resource/authority/language/SLV</VALUE>
+                     <IDENTIFIER>SLV</IDENTIFIER>
+                     <TYPE>language</TYPE>
+                  </URI>
+                  <OP-CODE>SLV</OP-CODE>
+                  <IDENTIFIER>SLV</IDENTIFIER>
+                  <PREFLABEL>Slovenian</PREFLABEL>
+               </EXPRESSION_USES_LANGUAGE>
+            </EXPRESSION>
+                        <EXPRESSION>
+               <EXPRESSION_TITLE type="data">
+                  <VALUE>Εκτελεστικός κανονισμός (ΕΕ) 2022/496 της Επιτροπής της 28ης Μαρτίου 2022 για την έγκριση της δραστικής ουσίας χαμηλού κινδύνου πολυκαψιδιακός πυρηνικός πολυεδρικός ιός του Spodoptera exigua (SeMNPV), απομονωθέν στέλεχος BV-0004, σύμφωνα με τον κανονισμό (ΕΚ) αριθ. 1107/2009 του Ευρωπαϊκού Κοινοβουλίου και του Συμβουλίου σχετικά με τη διάθεση φυτοπροστατευτικών προϊόντων στην αγορά, και για την τροποποίηση του εκτελεστικού κανονισμού (ΕΕ) αριθ. 540/2011 της Επιτροπής (Κείμενο που παρουσιάζει ενδιαφέρον για τον ΕΟΧ)</VALUE>
+                  <LANG>el</LANG>
+               </EXPRESSION_TITLE>
+               <EXPRESSION_USES_LANGUAGE type="concept">
+                  <URI>
+                     <VALUE>http://publications.europa.eu/resource/authority/language/ELL</VALUE>
+                     <IDENTIFIER>ELL</IDENTIFIER>
+                     <TYPE>language</TYPE>
+                  </URI>
+                  <OP-CODE>ELL</OP-CODE>
+                  <IDENTIFIER>ELL</IDENTIFIER>
+                  <PREFLABEL>Greek</PREFLABEL>
+               </EXPRESSION_USES_LANGUAGE>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.ELL.xhtml</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.ELL.xhtml</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.ELL.fmx4</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.ELL.fmx4</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+               <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
+                  <SAMEAS>
+                     <URI>
+                        <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001.ELL.pdfa2a</VALUE>
+                        <IDENTIFIER>JOL_2022_101_R_0001.ELL.pdfa2a</IDENTIFIER>
+                        <TYPE>oj</TYPE>
+                     </URI>
+                  </SAMEAS>
+               </EXPRESSION_MANIFESTED_BY_MANIFESTATION>
+            </EXPRESSION>
+
+
+</NOTICE>

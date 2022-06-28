@@ -1,0 +1,325 @@
+##########################
+#5.1 Mapping et Analyseurs
+##########################
+
+
+curl -XGET 'localhost:9200/docs/_analyze?analyzer=standard&pretty' -d '
+On peut spécifier le mapping à la création d''un index
+'
+
+curl -XGET 'localhost:9200/docs/_analyze?analyzer=french&pretty' -d '
+On peut spécifier le mapping à la création d''un index
+'
+
+
+
+curl -XGET 'localhost:9200/docs/_mapping?pretty' 
+
+
+curl -XDELETE 'localhost:9200/docs2?pretty'
+curl -XPUT -H "Content-Type: application/json" 'http://localhost:9200/docs2'  -d '
+{
+  "settings" : {
+    "number_of_shards" : 3,  
+    "number_of_replicas" : 1  
+  } 
+}' 
+
+PUT /docs2/_mapping/doc
+{
+  "properties": {
+    "attachment": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "french",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            }
+          }
+        },
+        "content_length": {
+          "type": "long"
+        },
+        "content_type": {
+          "type": "keyword"  
+        },
+        "date": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+	  "analyzer": "french",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "name": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
+####################
+#5.2 Gestion d'index
+####################
+DELETE /docs3
+
+PUT /docs3/
+{
+  "settings": {
+    "number_of_shards": 3,
+    "number_of_replicas": 1,
+    "analysis": {
+      "filter": {
+        "french_elision": {
+          "type": "elision",
+          "articles_case": true,
+          "articles": [
+            "l",
+            "m",
+            "t",
+            "qu",
+            "n",
+            "s",
+            "j",
+            "d",
+            "c",
+            "jusqu",
+            "quoiqu",
+            "lorsqu",
+            "puisqu"
+          ]
+        },
+        "french_stop": {
+          "type": "stop",
+          "stopwords_path": "myFrenchStop.txt"
+        },
+        "french_keywords": {
+          "type": "keyword_marker",
+          "keywords": [
+            "Exemple"
+          ]
+        },
+        "french_synonym": {
+          "type": "synonym",
+          "synonyms_path": "mySynonym.txt"
+        },
+        "french_stemmer": {
+          "type": "stemmer",
+          "language": "light_french"
+        }
+      },
+      "analyzer": {
+        "my_french": {
+          "tokenizer": "standard",
+          "filter": [
+            "french_elision",
+            "lowercase",
+            "french_stop",
+            "french_keywords",
+            "french_synonym",
+            "french_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "attachment": {
+          "properties": {
+            "content": {
+              "type": "text",
+              "analyzer": "my_french",
+              "fields": {
+                "en": {
+                  "type": "text",
+                  "analyzer": "english"
+                }
+              }
+            },
+            "content_length": {
+              "type": "long"
+            },
+            "content_type": {
+              "type": "keyword"
+            },
+            "date": {
+              "type": "date"
+            },
+            "language": {
+              "type": "keyword"
+            },
+            "title": {
+              "type": "text",
+              "analyzer": "my_french",
+              "fields": {
+                "en": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "name": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /docs3/_analyze
+{
+  "analyzer": "my_french",
+  "text": ["mais ou est donc or ni car ornicar"]
+}
+
+GET /docs3/_analyze
+{
+  "analyzer": "my_french",
+  "text": ["Javaee J2ee","ORM"]
+}
+
+
+####################
+#5.3 Réindexation
+####################
+
+// Création  d'un nouvel index avec noueaux settings et nouveaux analyzer
+DELETE /docs4
+
+PUT /docs4/
+{
+  "settings": {
+    "number_of_shards": 2,
+    "number_of_replicas": 1,
+    "analysis": {
+      "filter": {
+        "french_elision": {
+          "type": "elision",
+          "articles_case": true,
+          "articles": [
+            "l",
+            "m",
+            "t",
+            "qu",
+            "n",
+            "s",
+            "j",
+            "d",
+            "c",
+            "jusqu",
+            "quoiqu",
+            "lorsqu",
+            "puisqu"
+          ]
+        },
+        "french_stop": {
+          "type": "stop",
+          "stopwords_path": "myFrenchStop.txt"
+        },
+        "french_synonym": {
+          "type": "synonym",
+          "synonyms_path": "mySynonym.txt"
+        },
+        "french_minimal_stemmer": {
+          "type": "stemmer",
+          "language": "minimal_french"
+        }
+      },
+      "analyzer": {
+        "my_french": {
+          "tokenizer": "standard",
+          "filter": [
+            "french_elision",
+            "lowercase",
+            "french_stop",
+            "french_synonym",
+            "french_minimal_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "attachment": {
+          "properties": {
+            "content": {
+              "type": "text",
+              "analyzer": "my_french",
+              "fields": {
+                "en": {
+                  "type": "text",
+                  "analyzer": "english"
+                }
+              }
+            },
+            "content_length": {
+              "type": "long"
+            },
+            "content_type": {
+              "type": "keyword"
+            },
+            "date": {
+              "type": "date"
+            },
+            "language": {
+              "type": "keyword"
+            },
+            "title": {
+              "type": "text",
+              "analyzer": "my_french",
+              "fields": {
+                "en": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "name": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+POST _reindex
+{
+  "source": {
+    "index": "docs3"
+  },
+  "dest": {
+    "index": "docs4"
+  }
+}

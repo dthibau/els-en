@@ -1,0 +1,144 @@
+
+
+
+**************SYNONYMS*********************
+curl -XDELETE 'localhost:9200/synonyms?pretty'
+
+curl -XPUT -H "Content-Type: application/json" 'localhost:9200/synonyms?pretty' -d '
+{
+"settings": {
+  "analysis": {
+        "analyzer": {
+          "french_synonyms": {
+            "type": "custom",
+            "tokenizer" : "whitespace",
+             "filter": [ "lowercase", "my_synonyms" ] 
+          }
+        },
+            "filter" : {
+                "my_synonyms" : {
+                    "type" : "synonym",
+                    "synonyms" : "drools => drools,birt"
+                }
+            }
+    }
+  }
+}'
+curl -XGET -H "Content-Type: application/json" 'localhost:9200/synonyms/_analyze?analyzer=french_synonyms&pretty' -d '
+Moteur Drools'
+
+curl -XPUT 'localhost:9200/synonyms/_mapping/docs?pretty' -d '
+{
+  "dynamic": "false",
+  "_source": {
+    "excludes": [
+      "data"
+    ]
+  },
+  "properties": {
+    "attachment": {
+      "properties": {
+        "content": {
+          "type": "text",
+          "analyzer": "french_synonyms",
+          "fields": {
+            "en": {
+              "type": "text",
+              "analyzer": "english"
+            }
+          }
+        },
+        "content_length": {
+          "type": "long"
+        },
+        "content_type": {
+          "type": "keyword"  
+        },
+        "date": {
+          "type": "date"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "title": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "name": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}'
+
+-- Comparer 
+GET /docs2/fix/_search?_source=name
+{
+  "query": {
+    "match": {
+      "attachment.content": "Drools"
+    }
+  }
+}
+GET /docs2/fix/_search?_source=name
+{
+  "query": {
+    "match": {
+      "attachment.content": "BIRT"
+    }
+  }
+}
+
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "match": {
+      "attachment.content": "BIRT"
+    }
+  }
+}
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "match": {
+      "attachment.content": "Drools"
+    }
+  }
+}
+
+************Fuzzy*****************
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "match": {
+      "attachment.content": "adminnistration"
+    }
+  }
+}
+
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "fuzzy": {
+      "attachment.content": "adminnistration"
+    }
+  }
+}
+
+GET /synonyms/docs/_search?_source=name
+{
+  "query": {
+    "multi_match": {
+      "fields": ["attachment.content"], 
+      "query": "adminnistration",
+      "fuzziness" : "AUTO"
+    }
+  }
+}
+
