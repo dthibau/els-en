@@ -38,3 +38,41 @@ GET parent/docs/_search?_source=name,attachment.title&explain
       { "match": { "attachment.content": "administration" }}
     ] 
 } } }
+
+
+GET /office2/_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "attachment.content": "elasticsearch"
+        }
+      },
+      "script_score": {
+        "script": {
+          "source": "Math.log(2 + doc['attachment.content_length'].value)"
+        }
+      }
+    }
+  }
+}
+
+GET /_search
+{
+  "query": {
+    "function_score": {
+      "query": {
+        "match": {
+          "attachment.content": "elasticsearch"
+        }
+      },
+      "field_value_factor": {
+        "field": "attachment.content_length",
+        "factor": 1.2,
+        "modifier": "sqrt",
+        "missing": 1
+      }
+    }
+  }
+}
