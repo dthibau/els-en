@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <NOTICE decoding="eng" type="branch">
+   <WORK>
+      <URI>
+         <VALUE>http://publications.europa.eu/resource/cellar/0b650a88-aefe-11ec-83e1-01aa75ed71a1</VALUE>
+         <IDENTIFIER>0b650a88-aefe-11ec-83e1-01aa75ed71a1</IDENTIFIER>
+         <TYPE>cellar</TYPE>
+      </URI>
+      <SAMEAS>
+         <URI>
+            <VALUE>http://publications.europa.eu/resource/oj/JOL_2022_101_R_0001</VALUE>
+            <IDENTIFIER>JOL_2022_101_R_0001</IDENTIFIER>
+            <TYPE>oj</TYPE>
+         </URI>
+      </SAMEAS>
+      <SAMEAS>
+         <URI>
+            <VALUE>http://publications.europa.eu/resource/eli/reg_impl/2022/496/oj</VALUE>
+            <IDENTIFIER>reg_impl:2022:496:oj</IDENTIFIER>
+            <TYPE>eli</TYPE>
+         </URI>
+      </SAMEAS>
+      <SAMEAS>
+         <URI>
+            <VALUE>http://publications.europa.eu/resource/celex/32022R0496</VALUE>
+            <IDENTIFIER>32022R0496</IDENTIFIER>
+            <TYPE>celex</TYPE>
+         </URI>
+      </SAMEAS>
+      <WORK_ID_DOCUMENT type="data">
+         <VALUE>celex:32022R0496</VALUE>
+      </WORK_ID_DOCUMENT>
+   </WORK>
             <EXPRESSION>
                <EXPRESSION_MANIFESTED_BY_MANIFESTATION type="embedded_link">
                   <SAMEAS>
