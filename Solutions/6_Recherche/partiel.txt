@@ -17,7 +17,7 @@ PUT /docs4/
         }
       },
       "analyzer": {
-        "my_analyzer": {
+        "keyword_analyzer": {
           "type": "custom",
           "tokenizer": "keyword",
           "filter": [
@@ -35,13 +35,12 @@ PUT /docs4/
     }
   },
   "mappings": {
-    "doc": {
       "properties": {
         "attachment": {
           "properties": {
             "author": {
               "type": "text",
-              "analyzer": "my_analyzer",
+              "analyzer": "keyword_analyzer",
               "fields": {
                 "keyword": {
                   "type": "text"
@@ -83,8 +82,8 @@ PUT /docs4/
               "type": "text",
               "fields": {
                 "keyword": {
-                  "type": "keyword",
-                  "ignore_above": 256
+		  "type": "text",
+                  "analyzer": "keyword_analyzer",
                 },
                 "edge": {
                   "type": "text",
@@ -105,6 +104,5 @@ PUT /docs4/
         }
       }
     }
-  }
 }
 
