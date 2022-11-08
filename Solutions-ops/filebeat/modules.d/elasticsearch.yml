@@ -1,0 +1,47 @@
+# Module: elasticsearch
+# Docs: https://www.elastic.co/guide/en/beats/filebeat/8.2/filebeat-module-elasticsearch.html
+
+- module: elasticsearch
+  # Server log
+  server:
+    enabled: true
+
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    var.paths:
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*.log
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_server.json
+
+  gc:
+    enabled: true
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    var.paths:
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/gc.log.[0-9]*
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/gc.log
+
+  audit:
+    enabled: true
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    var.paths:
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_access.log
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_audit.json
+
+  slowlog:
+    enabled: true
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    var.paths:
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_index_search_slowlog.log     # Plain text logs
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_index_indexing_slowlog.log   # Plain text logs
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_index_search_slowlog.json    # JSON logs
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_index_indexing_slowlog.json 
+
+  deprecation:
+    enabled: true
+    # Set custom paths for the log files. If left empty,
+    # Filebeat will choose the paths depending on your OS.
+    var.paths:
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_deprecation.log   # Plain text logs
+      - /home/dthibau/Formations/ElasticSearch/MyWork/single-node/logs/*_deprecation.json  # JSON logs

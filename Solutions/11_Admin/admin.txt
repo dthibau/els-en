@@ -1,3 +1,103 @@
+################## Slow log ##########################
+PUT /site/_settings
+{ "index.search.slowlog.threshold.query.warn" : "10ms",
+"index.search.slowlog.threshold.fetch.debug": "10ms",
+"index.indexing.slowlog.threshold.index.info": "5s" }
+
+PUT /_cluster/settings
+{ "transient" : {
+  "logger.index.search.slowlog" : "DEBUG",
+  "logger.index.indexing.slowlog" : "WARN"
+} }
+
+
+#################### Backup / Restore #######################
+
+# elasticsearch yml
+path.repo: /home/dthibau/Formations/ElasticSearch/MyWork/Repo
+
+\\SALLE1PC6\partage_elk
+
+GET /_cat/indices
+
+POST /*/_open
+{
+
+}
+
+
+
+PUT _snapshot/my_backup
+{
+"type": "fs",
+"settings": {
+  "location": "/home/dthibau/Formations/ElasticSearch/MyWork/Repo"
+} }
+
+PUT _snapshot/my_backup/snapshot_1
+
+POST /*/_close
+{
+
+}
+
+POST _snapshot/my_backup/snapshot_1/_restore
+
+
+#################### Update index conf. ###################
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "office1",
+        "alias": "office"
+      }
+    }
+  ]
+}
+PUT /office2/
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  }
+}
+
+POST _reindex
+{
+  "source": {
+    "index": "office1"
+  },
+  "dest": {
+    "index": "office2"
+  }
+} 
+
+POST _aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "office2",
+        "alias": "office"
+      }
+    }
+  ]
+}
+
+POST _aliases
+{
+  "actions": [
+    {
+      "remove": {
+        "index": "office1",
+        "alias": "office"
+      }
+    }
+  ]
+}
+
 ####################  ILM #################################
 PUT _ilm/policy/access_policy
 {
@@ -148,51 +248,8 @@ PUT access-000001
 
 
 
-#################### Backup / Restore #######################
-
-# elasticsearch yml
-path.repo: /home/dthibau/Formations/ElasticSearch/MyWork/Repo
-
-\\SALLE1PC6\partage_elk
-
-GET /_cat/indices
-
-POST /*/_open
-{
-
-}
 
 
-
-PUT _snapshot/my_backup
-{
-"type": "fs",
-"settings": {
-  "location": "/home/dthibau/Formations/ElasticSearch/MyWork/Repo"
-} }
-
-PUT _snapshot/my_backup/snapshot_1
-
-POST /*/_close
-{
-
-}
-
-POST _snapshot/my_backup/snapshot_1/_restore
-
-
-
-################## Slow log ##########################
-PUT /site/_settings
-{ "index.search.slowlog.threshold.query.warn" : "10ms",
-"index.search.slowlog.threshold.fetch.debug": "10ms",
-"index.indexing.slowlog.threshold.index.info": "5s" }
-
-PUT /_cluster/settings
-{ "transient" : {
-  "logger.index.search.slowlog" : "DEBUG",
-  "logger.index.indexing.slowlog" : "WARN"
-} }
 
 
 

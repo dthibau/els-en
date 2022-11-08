@@ -1,0 +1,170 @@
+version: '2.2'
+services:
+  master01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: master01
+    environment:
+      - node.name=master01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master02,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.roles=[ master ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - master-data01:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  master02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: master02
+    environment:
+      - node.name=master02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master01,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.roles=[ master ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - master-data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  master03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: master03
+    environment:
+      - node.name=master03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master02,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.roles=[ master ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - master-data03:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  data01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: data01
+    environment:
+      - node.name=data01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master01,master02,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - node.roles=[ data ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data-data01:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  data02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: data02
+    environment:
+      - node.name=data02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master01,master02,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - node.roles=[ data ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data-data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  data03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: data03
+    environment:
+      - node.name=data03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master01,master02,master03
+      - cluster.initial_master_nodes=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - node.roles=[ data ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data-data03:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  coordinator:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    container_name: coordinator
+    environment:
+      - node.name=coordinator
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=master01,master02,master03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.roles=[ ]
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+
+  kib01:
+    image: docker.elastic.co/kibana/kibana:8.2.3
+    container_name: kib01
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://coordinator:9200
+      ELASTICSEARCH_HOSTS: '["http://coordinator:9200"]'
+    networks:
+      - elastic
+
+volumes:
+  master-data01:
+    driver: local
+  master-data02:
+    driver: local
+  master-data03:
+    driver: local
+  data-data01:
+    driver: local
+  data-data02:
+    driver: local
+  data-data03:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
